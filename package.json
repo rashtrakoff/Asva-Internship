@@ -14,7 +14,9 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.1.0",
+    "bignumber.js": "^7.2.1",
     "colors": "^1.4.0",
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "paraswap": "^4.13.0"
   }
 }
