@@ -24,16 +24,11 @@ module.exports = {
     hardhat:{
       forking: {
         url: process.env.INFURA_POLYGON_MAINNET_URL
-        // accounts: [`0x${process.env.MAINNET_PRIVATE_KEY}] // This is not working as expected
-      }
-    },
-    ropsten: {
-      url: process.env.ALCHEMY_ROPSTEN_URL,
-      accounts: [`0x${process.env.TESTNET_PRIVATE_KEY}`]
-    },
-    matic: {
-      url: process.env.INFURA_POLYGON_MAINNET_URL,
-      accounts: [`0x${process.env.MAINNET_PRIVATE_KEY}`]
+      },
+      accounts: [{
+        privateKey: `0x${process.env.MAINNET_PRIVATE_KEY}`,
+        balance: '10000000000000000000'
+      }]
     }
   },
   solidity: "0.7.6",

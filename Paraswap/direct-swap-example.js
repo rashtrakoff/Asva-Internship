@@ -94,8 +94,8 @@ async function swap(_srcAmount, from, to, network) {
 
         const wbtc = new ps.web3Provider.eth.Contract(WBTC_ABI, "0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6");
 
-        // const [USER_ADDRESS] = await ps.web3Provider.eth.getAccounts();
-        const USER_ADDRESS = "0x452181dAe31Cf9f42189df71eC64298993BEe6d3";
+        const [USER_ADDRESS] = await ps.web3Provider.eth.getAccounts();
+        // const USER_ADDRESS = "0x452181dAe31Cf9f42189df71eC64298993BEe6d3";
         console.log(USER_ADDRESS);
         console.log(await ps.web3Provider.eth.getBalance(USER_ADDRESS));
 
@@ -108,12 +108,12 @@ async function swap(_srcAmount, from, to, network) {
 
         // console.log("transaction", transaction);
 
-        const [dummyAccount] = await ps.web3Provider.eth.getAccounts();
+        // const [dummyAccount] = await ps.web3Provider.eth.getAccounts();
 
-        console.log("WBTC balance before: ", await wbtc.methods.balanceOf(dummyAccount).call());
+        console.log("WBTC balance before: ", await wbtc.methods.balanceOf(USER_ADDRESS).call());
 
         let tx = await ps.web3Provider.eth.sendTransaction({
-            from: dummyAccount,
+            from: USER_ADDRESS,
             to: transaction.to,
             data: transaction.data,
             value: transaction.value,
@@ -122,7 +122,7 @@ async function swap(_srcAmount, from, to, network) {
         });
 
         // console.log(tx);
-        console.log("WBTC balance after: ", await wbtc.methods.balanceOf(dummyAccount).call());
+        console.log("WBTC balance after: ", await wbtc.methods.balanceOf(USER_ADDRESS).call());
 
     } catch (error) {
         console.error(error);
