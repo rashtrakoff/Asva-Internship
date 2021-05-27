@@ -13,7 +13,6 @@ require("@nomiclabs/hardhat-truffle5");
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
-
 require('dotenv').config();
 
 /**
@@ -24,9 +23,17 @@ module.exports = {
   networks: {
     hardhat:{
       forking: {
-        url: process.env.ALCHEMY_URL
-        // blockNumber: 12497509
+        url: process.env.INFURA_POLYGON_MAINNET_URL
+        // accounts: [`0x${process.env.MAINNET_PRIVATE_KEY}] // This is not working as expected
       }
+    },
+    ropsten: {
+      url: process.env.ALCHEMY_ROPSTEN_URL,
+      accounts: [`0x${process.env.TESTNET_PRIVATE_KEY}`]
+    },
+    matic: {
+      url: process.env.INFURA_POLYGON_MAINNET_URL,
+      accounts: [`0x${process.env.MAINNET_PRIVATE_KEY}`]
     }
   },
   solidity: "0.7.6",

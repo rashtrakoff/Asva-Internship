@@ -3,16 +3,18 @@ const BN = require("bignumber.js");
 const Web3 = require("web3");
 const { createWeb3, createQueryString, etherToWei, waitForTxSuccess, weiToEther } = require('../0x/utils');
 
-// const PROVIDER_URL = process.env.ALCHEMY_URL;
-// const web3 = createWeb3();
+const PROVIDER_URL = "http://127.0.0.1:8545/";
 
 const referrer = "chucknorris";
 const SLIPPAGE = 1;//1%
 
 const networks = {
     MAINNET: 1,
+    ROPSTEN: 3,
     POLYGON: 137
 }
+
+const { abi: WBTC_ABI } = require('../artifacts/contracts/Interfaces.sol/IWETH.json');
 
 const tokens = {
     [networks.MAINNET]: [
@@ -43,6 +45,18 @@ const tokens = {
             "symbol": "WBTC",
             "address": "0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6"
         }
+    ],
+    [networks.ROPSTEN]: [
+        {
+            "decimals": 18,
+            "symbol": "ETH",
+            "address": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        },
+        {
+            "decimals": 18,
+            "symbol": "DAI",
+            "address": "0xad6d458402f60fd3bd25163575031acdce07538d"
+        }
     ]
 }
 
@@ -54,11 +68,9 @@ function t(symbol, network) {
 
 class ParaSwapper {
     constructor(network) {
-        // this.web3Provider = new Web3(PROVIDER_URL);
-        this.web3Provider = createWeb3();
-
-        // this.paraSwap = new ParaSwap().setWeb3Provider(this.web3Provider);
-        this.paraSwap = new ParaSwap().setWeb3Provider(this.web3Provider);
+        this.web3Provider = new Web3(PROVIDER_URL);
+        
+        this.paraSwap = new ParaSwap(network);
 
     }
 
@@ -75,41 +87,66 @@ class ParaSwapper {
 
 async function swap(_srcAmount, from, to, network) {
     try {
-
+        
         const srcAmount = new BN(_srcAmount).times(10 ** from.decimals).toFixed(0);
 
         const ps = new ParaSwapper(network);
 
-        const [USER_ADDRESS] = await ps.web3Provider.eth.getAccounts();
+        const wbtc = new ps.web3Provider.eth.Contract(WBTC_ABI, "0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6");
+
+        // const [USER_ADDRESS] = await ps.web3Provider.eth.getAccounts();
+        const USER_ADDRESS = "0x452181dAe31Cf9f42189df71eC64298993BEe6d3";
         console.log(USER_ADDRESS);
         console.log(await ps.web3Provider.eth.getBalance(USER_ADDRESS));
 
         const priceRoute = await ps.getRate(from, to, srcAmount);
+        // console.log(priceRoute);
 
         const minAmount = new BN(priceRoute.destAmount).times(1 - SLIPPAGE / 100).toFixed(0);
 
         const transaction = await ps.buildSwap(from, to, srcAmount, minAmount, priceRoute, USER_ADDRESS);
 
-        console.log("transaction", transaction);
+        // console.log("transaction", transaction);
 
+        const [dummyAccount] = await ps.web3Provider.eth.getAccounts();
+
+        console.log("WBTC balance before: ", await wbtc.methods.balanceOf(dummyAccount).call());
+
+        let tx = await ps.web3Provider.eth.sendTransaction({
+            from: dummyAccount,
+            to: transaction.to,
+            data: transaction.data,
+            value: transaction.value,
+            gas: transaction.gas,
+            gasPrice: transaction.gasPrice
+        });
+
+        // console.log(tx);
+        console.log("WBTC balance after: ", await wbtc.methods.balanceOf(dummyAccount).call());
 
     } catch (error) {
         console.error(error);
     }
 }
 
-
-swap(
-    1,
-    t("ETH", networks.MAINNET),
-    t("DAI", networks.MAINNET),
-    networks.MAINNET
-);
-
+// swap(
+//     1,
+//     t("ETH", networks.ROPSTEN),
+//     t("DAI", networks.ROPSTEN),
+//     networks.ROPSTEN
+// );
 
 // swap(
-//   1, 
-//   t("MATIC", networks.POLYGON), 
-//   t("WBTC", networks.POLYGON),
-//   networks.POLYGON
+//     1,
+//     t("ETH", networks.MAINNET),
+//     t("DAI", networks.MAINNET),
+//     networks.MAINNET
 // );
+
+
+swap(
+  0.01, 
+  t("MATIC", networks.POLYGON), 
+  t("WBTC", networks.POLYGON),
+  networks.POLYGON
+);
