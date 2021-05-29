@@ -18,7 +18,7 @@ const referrer = 'demo-trading-script';
 
 const DEFAULT_ALLOWED_SLIPPAGE = 0.01;//1%
 
-const paraSwap = new ParaSwap(network, apiURL);
+const paraSwap = new ParaSwap(network);
 
 async function getTokens() {
   return paraSwap.getTokens();
