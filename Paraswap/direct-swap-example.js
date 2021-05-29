@@ -92,10 +92,12 @@ async function swap(_srcAmount, from, to, network) {
 
         const ps = new ParaSwapper(network);
 
-        const wbtc = new ps.web3Provider.eth.Contract(WBTC_ABI, "0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6");
+        // Only for polygon, may need to change it for mainnet or any other network
+        // const wbtc = new ps.web3Provider.eth.Contract(WBTC_ABI, "0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6");
 
-        const [USER_ADDRESS] = await ps.web3Provider.eth.getAccounts();
-        // const USER_ADDRESS = "0x452181dAe31Cf9f42189df71eC64298993BEe6d3";
+        // const [USER_ADDRESS] = await ps.web3Provider.eth.getAccounts();
+        // const USER_ADDRESS = "";
+        const USER_ADDRESS = "0xfceA770875E7e6f25E33CEa5188d12Ef234606b4"; // For testing
         console.log(USER_ADDRESS);
         console.log(await ps.web3Provider.eth.getBalance(USER_ADDRESS));
 
@@ -106,14 +108,14 @@ async function swap(_srcAmount, from, to, network) {
 
         const transaction = await ps.buildSwap(from, to, srcAmount, minAmount, priceRoute, USER_ADDRESS);
 
-        // console.log("transaction", transaction);
+        console.log("transaction", transaction);
 
         // const [dummyAccount] = await ps.web3Provider.eth.getAccounts();
 
-        console.log("WBTC balance before: ", await wbtc.methods.balanceOf(USER_ADDRESS).call());
+        // console.log("WBTC balance before: ", await wbtc.methods.balanceOf(dummyAccount).call());
 
         let tx = await ps.web3Provider.eth.sendTransaction({
-            from: USER_ADDRESS,
+            from: USER_ADDRESS, // dummyAccount in case of testing
             to: transaction.to,
             data: transaction.data,
             value: transaction.value,
@@ -121,8 +123,9 @@ async function swap(_srcAmount, from, to, network) {
             gasPrice: transaction.gasPrice
         });
 
-        // console.log(tx);
-        console.log("WBTC balance after: ", await wbtc.methods.balanceOf(USER_ADDRESS).call());
+        console.log(tx);
+        // dummyAccount in case of testing
+        // console.log("WBTC balance after: ", await wbtc.methods.balanceOf(dummyAccount).call());
 
     } catch (error) {
         console.error(error);
@@ -136,17 +139,17 @@ async function swap(_srcAmount, from, to, network) {
 //     networks.ROPSTEN
 // );
 
-// swap(
-//     1,
-//     t("ETH", networks.MAINNET),
-//     t("DAI", networks.MAINNET),
-//     networks.MAINNET
-// );
-
-
 swap(
-  0.01, 
-  t("MATIC", networks.POLYGON), 
-  t("WBTC", networks.POLYGON),
-  networks.POLYGON
+    1,
+    t("ETH", networks.MAINNET),
+    t("DAI", networks.MAINNET),
+    networks.MAINNET
 );
+
+
+// swap(
+//   1, 
+//   t("WBTC", networks.POLYGON), 
+//   t("MATIC", networks.POLYGON),
+//   networks.POLYGON
+// );

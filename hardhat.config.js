@@ -23,12 +23,13 @@ module.exports = {
   networks: {
     hardhat:{
       forking: {
-        url: process.env.INFURA_POLYGON_MAINNET_URL
+        url: process.env.ALCHEMY_MAINNET_URL
       },
-      accounts: [{
-        privateKey: `0x${process.env.MAINNET_PRIVATE_KEY}`,
-        balance: '10000000000000000000'
-      }]
+      // Disable this when testing Paraswap
+      // accounts: [{
+      //   privateKey: `0x${process.env.MAINNET_PRIVATE_KEY}`,
+      //   balance: '10000000000000000000'
+      // }]
     }
   },
   solidity: "0.7.6",

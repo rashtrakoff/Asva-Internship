@@ -4,7 +4,6 @@ const BigNumber = require('bignumber.js');
 const process = require('process');
 const Web3 = require('web3');
 
-const API_QUOTE_URL = 'https://api.0x.org/swap/v1/quote';
 const { MNEMONIC, RPC_URL } = process.env;
 
 function createQueryString(params) {
