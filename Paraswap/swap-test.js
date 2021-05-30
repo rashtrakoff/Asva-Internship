@@ -90,8 +90,8 @@ async function fetchTokenData(token) {
   return;
 }
 
-async function fetchRate(srcToken, destToken, srcAmount) {
-  return paraSwap.getRate(srcToken, destToken, srcAmount);
+async function fetchRate(srcToken, destToken, srcAmount, referrer, sellTokenDecimals, buyTokenDecimals) {
+  return paraSwap.getRate(srcToken, destToken, srcAmount, 'SELL', { referrer }, sellTokenDecimals, buyTokenDecimals);
 }
 
 async function buildSwapTx(srcToken, destToken, srcAmount, priceRoute, senderAddress, referrer) {
@@ -126,21 +126,18 @@ async function run(argv) {
   console.log(`${argv.buyToken} amount of real address ${argv.realAddress}: ${buyTokenBalance}`);
 
   // Swapping ETH/BNB/MATIC for desired sellToken in case sellToken != ETH/BNB/MATIC
-  if (argv.sellToken != "ETH") {
-    const priceRoute = await fetchRate('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', sellTokenData.address, convertTo(argv.amount, sellTokenData.decimals));
-    
+  if (argv.sellToken != 'ETH' && argv.sellToken != 'BNB' && argv.sellToken != 'MATIC') {
+    const priceRoute = await fetchRate('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', sellTokenData.address, etherToWei(argv.amount), "chucknorris", 18, sellTokenData.decimals);
+
     const transaction = await buildSwapTx(
       '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
       sellTokenData.address,
-      convertTo(argv.amount, '18'),
+      etherToWei(argv.amount),
       priceRoute,
       argv.realAddress,
       "chucknorris"
     );
-
-    console.log(transaction);
-    process.exit(0);
-
+    
     await waitForTxSuccess(web3.eth.sendTransaction({
       from: dummyAddress,
       to: transaction.to,
@@ -150,9 +147,10 @@ async function run(argv) {
       gasPrice: transaction.gasPrice
     }));
 
-    console.log(`Dummy address balance of ${argv.sellToken} after swapping using native token: ${await findBalance(argv.realAddress, sellTokenData.address)}`);
+    console.log(`Dummy address balance of ${argv.sellToken} after swapping with native token: ${await findBalance(dummyAddress, sellTokenData.address)}`);
 
   } else {
+    // TODO: When the swap uses native token of the network as sellToken
     return;
   }
 

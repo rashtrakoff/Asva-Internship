@@ -15,6 +15,7 @@ const networks = {
 }
 
 const { abi: WBTC_ABI } = require('../artifacts/contracts/Interfaces.sol/IWETH.json');
+const { abi: ERC20_ABI } = require('../artifacts/contracts/Interfaces.sol/IERC20.json');
 
 const tokens = {
     [networks.MAINNET]: [
@@ -94,10 +95,11 @@ async function swap(_srcAmount, from, to, network) {
 
         // Only for polygon, may need to change it for mainnet or any other network
         // const wbtc = new ps.web3Provider.eth.Contract(WBTC_ABI, "0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6");
+        const dai = new ps.web3Provider.eth.Contract(ERC20_ABI, '0x6B175474E89094C44Da98b954EedeAC495271d0F')
 
         // const [USER_ADDRESS] = await ps.web3Provider.eth.getAccounts();
         // const USER_ADDRESS = "";
-        const USER_ADDRESS = "0xfceA770875E7e6f25E33CEa5188d12Ef234606b4"; // For testing
+        const USER_ADDRESS = "0x73bceb1cd57c711feac4224d062b0f6ff338501e"; // For testing
         console.log(USER_ADDRESS);
         console.log(await ps.web3Provider.eth.getBalance(USER_ADDRESS));
 
@@ -108,14 +110,15 @@ async function swap(_srcAmount, from, to, network) {
 
         const transaction = await ps.buildSwap(from, to, srcAmount, minAmount, priceRoute, USER_ADDRESS);
 
-        console.log("transaction", transaction);
+        // console.log("transaction", transaction);
 
-        // const [dummyAccount] = await ps.web3Provider.eth.getAccounts();
+        const [dummyAccount] = await ps.web3Provider.eth.getAccounts();
 
         // console.log("WBTC balance before: ", await wbtc.methods.balanceOf(dummyAccount).call());
+        console.log("Dai balance before: ", await dai.methods.balanceOf(dummyAccount).call());
 
         let tx = await ps.web3Provider.eth.sendTransaction({
-            from: USER_ADDRESS, // dummyAccount in case of testing
+            from: dummyAccount, // dummyAccount in case of testing
             to: transaction.to,
             data: transaction.data,
             value: transaction.value,
@@ -123,9 +126,10 @@ async function swap(_srcAmount, from, to, network) {
             gasPrice: transaction.gasPrice
         });
 
-        console.log(tx);
+        // console.log(tx);
         // dummyAccount in case of testing
         // console.log("WBTC balance after: ", await wbtc.methods.balanceOf(dummyAccount).call());
+        console.log("Dai balance after: ", await dai.methods.balanceOf(dummyAccount).call());
 
     } catch (error) {
         console.error(error);
@@ -142,7 +146,7 @@ async function swap(_srcAmount, from, to, network) {
 swap(
     1,
     t("ETH", networks.MAINNET),
-    t("DAI", networks.MAINNET),
+    t("USDC", networks.MAINNET),
     networks.MAINNET
 );
 
