@@ -23,12 +23,12 @@ module.exports = {
   networks: {
     hardhat:{
       forking: {
-        url: process.env.ALCHEMY_MAINNET_URL
+        url: process.env.BSC_MAINNET_URL
       },
       // Disable this when testing Paraswap
       // accounts: [{
-      //   privateKey: `0x${process.env.MAINNET_PRIVATE_KEY}`,
-      //   balance: '10000000000000000000'
+      //   privateKey: `0x${process.env.MAIN_PRIVATE_KEY}`,
+      //   balance: '100000000000000000000'
       // }]
     }
   },

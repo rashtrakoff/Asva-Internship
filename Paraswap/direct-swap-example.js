@@ -146,7 +146,7 @@ async function swap(_srcAmount, from, to, network) {
 swap(
     1,
     t("ETH", networks.MAINNET),
-    t("USDC", networks.MAINNET),
+    t("DAI", networks.MAINNET),
     networks.MAINNET
 );
 

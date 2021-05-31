@@ -1,5 +1,7 @@
 {
-  "scripts": {},
+  "scripts": {
+    
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-truffle5": "^2.0.0",
