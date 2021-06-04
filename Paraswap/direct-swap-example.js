@@ -11,6 +11,7 @@ const SLIPPAGE = 1;//1%
 const networks = {
     MAINNET: 1,
     ROPSTEN: 3,
+
     POLYGON: 137
 }
 

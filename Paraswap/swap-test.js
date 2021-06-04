@@ -132,7 +132,7 @@ async function run(argv) {
 
   try {
     const priceRoute = await fetchRate(sellTokenData.address, buyTokenData.address, convertTo(argv.amount, sellTokenData.decimals));
-    
+    console.log(priceRoute)
     if (argv.sellToken != 'ETH' && argv.sellToken != 'BNB' && argv.sellToken != 'MATIC') {
       await paraSwap.approveToken(convertTo(argv.amount, sellTokenData.decimals), realAddress, sellTokenData.address);
     }
@@ -146,7 +146,7 @@ async function run(argv) {
       referrer
     );
 
-    // console.log(transaction);
+     console.log(transaction);
 
     await waitForTxSuccess(web3.eth.sendTransaction({
       from: realAddress,
